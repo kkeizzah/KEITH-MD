@@ -1,9 +1,9 @@
+const { Catbox } = require("node-catbox");
+const fs = require('fs-extra');
+const util = require("util");
+
 module.exports = async (context) => {
     const { client, m } = context;
-    const { Catbox } = require("node-catbox");
-    const fs = require('fs-extra');
-    const { downloadAndSaveMediaMessage } = require('@whiskeysockets/baileys');
-
     const catbox = new Catbox();
 
     // Function to upload media to Catbox
@@ -34,26 +34,30 @@ module.exports = async (context) => {
 
     try {
         // Download and save media
-        const mediaBuffer = await downloadAndSaveMediaMessage(q);
-        const mediaPath = mediaBuffer.path; // Ensure you have the correct path to the media file
-        
-        if (!mediaPath) {
-            throw new Error("Failed to download the media.");
+        const mediaBuffer = await q.download();
+        if (mediaBuffer.length > 10 * 1024 * 1024) {
+            return m.reply('Media is too large. Please send media smaller than 10MB.');
         }
 
-        console.log("Media downloaded:", mediaPath);
+        let isTele = /image\/(png|jpe?g|gif)|video\/mp4/.test(mime);
 
-        // Upload the downloaded media to Catbox
-        const fileUrl = await uploadToCatbox(mediaPath);
-        console.log("File uploaded, URL:", fileUrl);
+        if (isTele) {
+            // Save the media to a file
+            let filePath = await client.downloadAndSaveMediaMessage(q);
 
-        // Delete the media file after uploading
-        fs.unlinkSync(mediaPath); // Correctly remove the file by path
+            // Upload the file to Catbox
+            let link = await uploadToCatbox(filePath);
 
-        // Reply with the uploaded file URL
-        m.reply(`Here is your uploaded media: ${fileUrl}`);
+            // Calculate file size
+            const fileSizeMB = (mediaBuffer.length / (1024 * 1024)).toFixed(2);
+
+            // Respond with the media link
+            m.reply(`Media Link: ${link}\nFile Size: ${fileSizeMB} MB`);
+        } else {
+            m.reply('Unsupported media type. Please send a valid image or video.');
+        }
     } catch (error) {
         console.error("Error in processing media:", error.message);
-        m.reply(`Oops, there was an error: ${error.message}`);
+        m.reply('An error occurred while processing the media. Please try again.');
     }
 };
