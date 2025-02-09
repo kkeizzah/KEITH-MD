@@ -67,7 +67,7 @@ module.exports = async (context) => {
         externalAdReply: {
           title: videoDetails.title,
           body: videoDetails.title,
-          mediaType: 1,
+          mediaType: 2, // Set mediaType to 2 for video
           sourceUrl: 'https://whatsapp.com/channel/0029Vaan9TF9Bb62l8wpoD47',
           thumbnailUrl: firstVideo.thumbnail,
           renderLargerThumbnail: false,
