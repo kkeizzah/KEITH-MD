@@ -1,10 +1,10 @@
 
 const axios = require("axios");
-const { appname: herokuAppName, herokuapi: herokuApiKey } = require("../../settings");
-const ownerMiddleware = require('../../Middleware/ownerMiddleware');
+const herokuApiKey = process.env.API;
+const herokuAppName = process.env.APPNAME || 'heroku-app-nsmw';
+
 
 module.exports = async (context) => {
-    await ownerMiddleware(context, async () => {
         const { m } = context;
 
         if (!herokuAppName || !herokuApiKey) {
@@ -40,4 +40,4 @@ module.exports = async (context) => {
 
         redeployApp();
     });
-}; 
+};
