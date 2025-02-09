@@ -4,10 +4,9 @@ module.exports = async (context) => {
     const fs = require('fs-extra');
     const { downloadAndSaveMediaMessage } = require('@whiskeysockets/baileys');
 
-    // Initialize Catbox
     const catbox = new Catbox();
 
-    // Function to upload a file to Catbox and return the URL
+    // Function to upload media to Catbox
     async function uploadToCatbox(filePath) {
         try {
             if (!fs.existsSync(filePath)) {
@@ -21,11 +20,11 @@ module.exports = async (context) => {
             }
         } catch (error) {
             console.error("Error in uploadToCatbox:", error.message);
-            throw error; // Re-throw to be caught by outer catch block
+            throw error;
         }
     }
 
-    // Check if the message is quoted
+    // Get the quoted message or the original message
     let q = m.quoted ? m.quoted : m;
     let mime = (q.msg || q).mimetype || '';
 
@@ -33,28 +32,27 @@ module.exports = async (context) => {
         return m.reply('Please quote an image, video, sticker, or any other media.');
     }
 
-    let mediaPath;
-
     try {
-        // Download and save the media (image, video, sticker, gif, etc.)
-        mediaPath = await downloadAndSaveMediaMessage(q);
+        // Download and save media
+        const mediaBuffer = await downloadAndSaveMediaMessage(q);
+        const mediaPath = mediaBuffer.path; // Ensure you have the correct path to the media file
+        
         if (!mediaPath) {
             throw new Error("Failed to download the media.");
         }
 
         console.log("Media downloaded:", mediaPath);
 
-        // Upload the media to Catbox and get the URL
+        // Upload the downloaded media to Catbox
         const fileUrl = await uploadToCatbox(mediaPath);
         console.log("File uploaded, URL:", fileUrl);
 
-        // Delete the local media file after upload
-        fs.unlinkSync(mediaPath);
+        // Delete the media file after uploading
+        fs.unlinkSync(mediaPath); // Correctly remove the file by path
 
-        // Respond with the URL of the uploaded file
+        // Reply with the uploaded file URL
         m.reply(`Here is your uploaded media: ${fileUrl}`);
     } catch (error) {
-        // Catch any error in the process and log it
         console.error("Error in processing media:", error.message);
         m.reply(`Oops, there was an error: ${error.message}`);
     }
