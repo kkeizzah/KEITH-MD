@@ -1,41 +1,30 @@
-module.exports = async (context) => {
-    const { client, m, uploadToCatbox } = context;
- const fs = require("fs");
-const path = require('path');
 
+const fs = require("fs");
+const path = require("path");
 const util = require("util");
 
-let q = m.quoted ? m.quoted : m
-let mime = (q.msg || q).mimetype || ''
+module.exports = async (context) => {
+  const { client, m, uploadToCatbox } = context;
 
-if (!mime) return m.reply('Quote an image or video')
+  let q = m.quoted ? m.quoted : m;
+  let mime = (q.msg || q).mimetype || '';
 
-let mediaBuffer = await q.download()
+  if (!mime) return m.reply('Quote an image or video');
 
-  if (mediaBuffer.length > 10 * 1024 * 1024) return m.reply('Media is too large.')
+  let mediaBuffer = await q.download();
 
+  if (mediaBuffer.length > 10 * 1024 * 1024) return m.reply('Media is too large.');
 
+  let isSupported = /image\/(png|jpe?g|gif)|video\/mp4|audio\/.*/.test(mime);
 
+  if (isSupported) {
+    let fta2 = await client.downloadAndSaveMediaMessage(q);
+    let link = await uploadToCatbox(fta2);
 
-let isTele = /image\/(png|jpe?g|gif)|video\/mp4/.test(mime)
+    const fileSizeMB = (mediaBuffer.length / (1024 * 1024)).toFixed(2);
 
-
-if (isTele) {
-
-let fta2 = await client.downloadAndSaveMediaMessage(q)
-
-    let link = await uploadToCatbox(fta2)
-
-    const fileSizeMB = (mediaBuffer.length / (1024 * 1024)).toFixed(2)
-
-    m.reply(`Media Link:-\n\n${link}`)
+    m.reply(`Media Link:\n\n${link}\n\nFile Size: ${fileSizeMB} MB`);
   } else {
-    m.reply(`Error occured...`)
+    m.reply('Error occurred. Unsupported media type.');
   }
-              
-      
-          
-                
-
-
-            }
+};
