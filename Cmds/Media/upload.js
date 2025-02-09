@@ -1,31 +1,51 @@
-
-const fs = require("fs");
-const path = require("path");
-const util = require("util");
-
 module.exports = async (context) => {
-  const { client, m, uploadtoimgur } = context;
+    const { client, m } = context;
+    const { Catbox } = require("node-catbox");
+    const fs = require('fs-extra');
+    const { downloadAndSaveMediaMessage } = require('@whiskeysockets/baileys');
 
-  let q = m.quoted ? m.quoted : m;
-  let mime = (q.msg || q).mimetype || "";
+    // Initialize Catbox
+    const catbox = new Catbox();
 
-  if (!mime) return m.reply('Quote an image, video, or other media');
+    // Function to upload a file to Catbox and return the URL
+    async function uploadToCatbox(filePath) {
+        if (!fs.existsSync(filePath)) {
+            throw new Error("File does not exist");
+        }
+        try {
+            const uploadResult = await catbox.uploadFile({ path: filePath });
+            if (uploadResult) {
+                return uploadResult;
+            } else {
+                throw new Error("Error retrieving file link");
+            }
+        } catch (error) {
+            throw new Error(String(error));
+        }
+    }
 
-  let mediaBuffer = await q.download();
+    // Check if the message is quoted
+    let q = m.quoted ? m.quoted : m;
+    let mime = (q.msg || q).mimetype || '';
 
-  if (mediaBuffer.length > 10 * 1024 * 1024) return m.reply('Media is too large.');
+    if (!mime) return m.reply('Please quote an image, video, sticker, or any other media.');
 
-  // Check if the media type is supported
-  let isSupported = /image\/(png|jpe?g|gif)|video\/mp4|audio\/.*/.test(mime);
+    let mediaPath;
 
-  if (isSupported) {
-    let fta2 = await client.downloadAndSaveMediaMessage(q);
-    let link = await uploadtoimgur(fta2);
+    try {
+        // Download and save the media (image, video, sticker, gif, etc.)
+        mediaPath = await downloadAndSaveMediaMessage(q);
 
-    const fileSizeMB = (mediaBuffer.length / (1024 * 1024)).toFixed(2);
+        // Upload the media to Catbox and get the URL
+        const fileUrl = await uploadToCatbox(mediaPath);
 
-    m.reply(`Media Link:\n\n${link}\n\nFile Size: ${fileSizeMB} MB`);
-  } else {
-    m.reply('Error occurred. Unsupported media type.');
-  }
+        // Delete the local media file after upload
+        fs.unlinkSync(mediaPath);
+
+        // Respond with the URL of the uploaded file
+        m.reply(`Here is your uploaded media: ${fileUrl}`);
+    } catch (error) {
+        console.error("Error while creating your URL:", error);
+        m.reply("Oops, there was an error uploading the media.");
+    }
 };
