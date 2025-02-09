@@ -1,4 +1,3 @@
-
 const axios = require('axios');
 const ytSearch = require('yt-search');
 
@@ -7,11 +6,12 @@ module.exports = async (context) => {
 
   const query = text;
   try {
+    // Ensure the query is provided
     if (!query) {
-      m.reply("What video do you want to download?");
-      return;
+      return m.reply("What video do you want to download?");
     }
 
+    // Perform the search using yt-search
     const searchResults = await ytSearch(query);
 
     // Check if any videos were found
@@ -33,7 +33,7 @@ module.exports = async (context) => {
       }
     };
 
-    // List of APIs to try
+    // List of APIs to try for downloading
     const apis = [
       `https://api-rin-tohsaka.vercel.app/download/ytmp4?url=${encodeURIComponent(videoUrl)}`,
       `https://api.davidcyriltech.my.id/download/ytmp3?url=${encodeURIComponent(videoUrl)}`,
@@ -42,10 +42,13 @@ module.exports = async (context) => {
       `https://api.dreaded.site/api/ytdl/audio?url=${encodeURIComponent(videoUrl)}`
     ];
 
+    // Loop through APIs and fetch download data
     let downloadData;
     for (const api of apis) {
       downloadData = await getDownloadData(api);
-      if (downloadData && downloadData.success) break;
+      if (downloadData && downloadData.success) {
+        break;
+      }
     }
 
     // Check if a valid download URL was found
@@ -80,4 +83,4 @@ module.exports = async (context) => {
     console.error('Error during download process:', error);
     return m.reply(`Download failed due to an error: ${error.message || error}`);
   }
-});
+};
