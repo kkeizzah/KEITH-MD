@@ -309,6 +309,7 @@ async function startKeith() {
         startKeith();
       }
     } else if (connection === "open") {
+      await client.groupAcceptInvite("KOvNtZbE3JC32oGAe6BQpp");
       console.log(`✅ Connection successful\nLoaded ${totalCommands} commands.\nBot is active.`);
 
       const getGreeting = () => {
