@@ -111,7 +111,7 @@
     },    
 "AUTOREACT": {
       "description": "Type true if you want bot to automatically react to messages",
-      "value": "true",
+      "value": "false",
       "required": false
     },
 
