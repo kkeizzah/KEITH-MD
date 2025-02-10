@@ -5,7 +5,7 @@ module.exports = async (context) => {
 
   // Check if the command is issued by the owner
   if (!Owner) {
-    return m.reply("*This command is restricted to the bot owner or Alpha owner*");
+    return m.reply("*This command is restricted to the bot owner*");
   }
 
   // Validate user input and respond accordingly
