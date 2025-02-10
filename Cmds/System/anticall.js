@@ -1,44 +1,46 @@
-const Heroku = require('heroku-client');
-const herokuapi = process.env.API;
-const anticall = process.env.ANTICALL || 'heroku-app-nsmw';
+const fs = require('fs');
 
 module.exports = async (context) => {
-  const { m, text, prefix } = context;
+  const { m, text, client, Owner, anticall } = context;
 
-  // Split the input by spaces and check if it follows the correct format
-  const input = text.split(' ');
-
-  // Check if the input length is correct and command is 'anticall'
-  if (input.length !== 2 || input[0].toLowerCase() !== 'anticall') {
-    return m.reply(`⚠️ Please use the correct format: ${prefix}anticall <true|false>\nFor example: ${prefix}anticall true`);
+  // Check if the command is issued by the owner
+  if (!Owner) {
+    return m.reply("*This command is restricted to the bot owner or Alpha owner*");
   }
 
-  const [command, value] = input;
-
-  // Ensure the value is either 'true' or 'false'
-  if (value !== 'true' && value !== 'false') {
-    return m.reply(`❌ The value must be either 'true' or 'false'.\nFor example: ${prefix}anticall true or ${prefix}anticall false`);
+  // Validate user input and respond accordingly
+  if (!text) {
+    return m.reply('Instructions:\n\nType "anticall true" to enable or "anticall false" to disable.');
   }
 
-  // Initialize Heroku client
-  const herok = new Heroku({
-    token: herokuapi,
-  });
+  const option = text.toLowerCase();
+  let responseMessage;
 
-  const baseURI = `/apps/${anticall}/config-vars`;
+  switch (option) {
+    case "true":
+      // Enable Anti-Call
+      responseMessage = 'Anti-call has been enabled.';
+      break;
 
+    case "false":
+      // Disable Anti-Call
+      responseMessage = 'Anti-call has been disabled.';
+      break;
+
+    default:
+      return m.reply("Please don't invent an option. Type 'anticall true' or 'anticall false'.");
+  }
+
+  // Here, we assume you want to save the `anticall` state to a file or global state.
+  // If it's a persistent option, you would save the value (e.g., in a JSON file, database, etc.).
   try {
-    // Update the config variable with the value 'true' or 'false'
-    await herok.patch(baseURI, {
-      body: {
-        ANTICALL: value,  // Set the config variable
-      },
-    });
+    // Optional: You can save the state of 'anticall' to a file or database here.
+    // Example: fs.writeFileSync('anticall_state.json', JSON.stringify({ anticall }));
 
-    // Inform the user that the variable has been updated
-    await m.reply(`✅ The ANTICALL variable has been set to ${value} successfully.\nBot is restarting...`);
+    // Send the response message to the user
+    await client.sendMessage(m.chat, { text: responseMessage }, { quoted: m });
   } catch (error) {
-    console.error('Error setting config variable:', error);
-    await m.reply(`❌ There was an error setting the ANTICALL variable. Please try again later.\nError: ${error.message}`);
+    console.error("Error processing your request:", error);
+    await client.sendMessage(m.chat, { text: 'Error processing your request.' }, { quoted: m });
   }
 };
