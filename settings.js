@@ -65,6 +65,8 @@ module.exports = {
   timezone,
   author,  
   url,
+   megaEmail,
+    megaPassword, 
   gurl,
   antibot,
   packname,
