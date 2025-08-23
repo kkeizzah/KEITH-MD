@@ -18,6 +18,7 @@
   "repository": "https://github.com/kkeizzah/KEITH-MD.git",
   "logo": "https://i.imgur.com/dAtHp2k.jpeg",
   "success_url": "/",
+  "stack": "container",
   "env": {
     "PREFIX": {
       "description": "choose your prefix for keith. To prevent errors and confusion you must set a prefix",
@@ -53,10 +54,15 @@
       "required": false
     }
   },
-  "buildpacks": [
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "standard-2x"
     }
-  ],
-  "stack": "heroku-24"
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0"
+    }
+  ]
 }
