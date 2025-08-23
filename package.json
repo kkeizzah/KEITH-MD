@@ -47,7 +47,7 @@
     "compile-run": "^2.3.4",    
     "crypto": "^1.0.1",  
     "express": "latest",    
-    
+    "pg": "^8.13.3",
     "mime-types": "latest",    
     "megajs": "latest",    
     "file-type": "^16.5.3",
@@ -68,7 +68,7 @@
     "node-webpmux": "^3.1.5", 
     "performance-now": "^2.1.0",    
     "pino": "^7.0.5",
-    "ruhend-scraper": "latest",
+    
     "simple-git": "^3.7.1", 
     "translatte": "^3.0.1",    
     "util": "^0.12.5",
