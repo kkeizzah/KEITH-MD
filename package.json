@@ -36,6 +36,7 @@
     "@hapi/boom": "latest",
     "@ffmpeg-installer/ffmpeg": "latest",
     "stream": "latest",
+    "qrcode-reader": "latest",
     "form-data": "^4.0.1",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
