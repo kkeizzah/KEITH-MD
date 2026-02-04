@@ -19,7 +19,7 @@ const autostatusStatusLikeEmojis = process.env.STATUS_LIKE_EMOJIS || '💛,❤�
 
 
 // Bot settings
-const botPrefix = process.env.PREFIX || ".";
+const botPrefix = process.env.PREFIX || "";
 const botAuthor = process.env.AUTHOR || "Keith";
 const botUrl = process.env.BOT_PIC || "https://files.catbox.moe/9zqj7g.jpg";
 const botGurl = process.env.BOT_GURL || "https://github.com/Keithkeizzah/KEITH-MD";
