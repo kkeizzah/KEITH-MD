@@ -1,53 +1,61 @@
-
 const { DataTypes } = require('sequelize');
-const { database } = require('../settings'); 
+const { 
+  database, 
+  botPrefix, 
+  botAuthor, 
+  botUrl, 
+  botGurl, 
+  botTimezone, 
+  botBotname, 
+  botPackname, 
+  botMode, 
+  botSessionName 
+} = require('../settings'); 
 
 const SettingsDB = database.define('settings', {
     prefix: {
         type: DataTypes.STRING,
-        defaultValue: ".",
+        defaultValue: botPrefix,
         allowNull: false
     },
     author: {
         type: DataTypes.STRING,
-        defaultValue: "Keith",
+        defaultValue: botAuthor,
         allowNull: false
     },
     url: {
         type: DataTypes.STRING,
-        defaultValue: "https://files.catbox.moe/9zqj7g.jpg",
+        defaultValue: botUrl,
         allowNull: false
     },
     gurl: {
         type: DataTypes.STRING,
-        defaultValue: "https://github.com/Keithkeizzah/KEITH-MD",
+        defaultValue: botGurl,
         allowNull: false
     },
     timezone: {
         type: DataTypes.STRING,
-        defaultValue: "Africa/Nairobi",
+        defaultValue: botTimezone,
         allowNull: false
     },
     botname: {
         type: DataTypes.STRING,
-        defaultValue: "KEITH-MD",
+        defaultValue: botBotname,
         allowNull: false
     },
     packname: {
         type: DataTypes.STRING,
-        defaultValue: "KEITH-MD",
+        defaultValue: botPackname,
         allowNull: false
     },
     mode: {
         type: DataTypes.STRING,
-        defaultValue: "public",
+        defaultValue: botMode,
         allowNull: false
-    
-    
     },
     sessionName: {
         type: DataTypes.STRING,
-        defaultValue: "keith-md",
+        defaultValue: botSessionName,
         allowNull: false
     }
 }, {
@@ -59,6 +67,23 @@ async function initSettingsDB() {
     try {
         await SettingsDB.sync({ alter: true });
         console.log('Settings table ready');
+        
+        // Initialize with default values if empty
+        const count = await SettingsDB.count();
+        if (count === 0) {
+            await SettingsDB.create({
+                prefix: botPrefix,
+                author: botAuthor,
+                url: botUrl,
+                gurl: botGurl,
+                timezone: botTimezone,
+                botname: botBotname,
+                packname: botPackname,
+                mode: botMode,
+                sessionName: botSessionName
+            });
+            console.log('Bot settings defaults initialized from settings');
+        }
     } catch (error) {
         console.error('Error initializing Settings table:', error);
         throw error;
@@ -69,23 +94,32 @@ async function getSettings() {
     try {
         let settings = await SettingsDB.findOne();
         if (!settings) {
-            settings = await SettingsDB.create({});
+            settings = await SettingsDB.create({
+                prefix: botPrefix,
+                author: botAuthor,
+                url: botUrl,
+                gurl: botGurl,
+                timezone: botTimezone,
+                botname: botBotname,
+                packname: botPackname,
+                mode: botMode,
+                sessionName: botSessionName
+            });
         }
         return settings;
     } catch (error) {
         console.error('Error getting settings:', error);
-        // Fallback to default settings
+        // Fallback to environment defaults
         return {
-            prefix: ".",
-            author: "Keith",
-            url: "https://files.catbox.moe/9zqj7g.jpg",
-            gurl: "https://github.com/Keithkeizzah/KEITH-MD",
-            timezone: "Africa/Nairobi",
-            botname: "KEITH-MD",
-            packname: "KEITH-MD",
-            mode: "public",
-           
-            sessionName: "KEITH-MD"
+            prefix: botPrefix,
+            author: botAuthor,
+            url: botUrl,
+            gurl: botGurl,
+            timezone: botTimezone,
+            botname: botBotname,
+            packname: botPackname,
+            mode: botMode,
+            sessionName: botSessionName
         };
     }
 }
