@@ -52,11 +52,7 @@
       "value": ".",
       "required": false
     },
-    "AUTHOR": {
-      "description": "Bot author name",
-      "value": "Keith",
-      "required": false
-    },
+    
     "BOT_PIC": {
       "description": "Bot profile picture URL",
       "value": "https://files.catbox.moe/9zqj7g.jpg",
