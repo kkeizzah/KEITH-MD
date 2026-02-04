@@ -11,6 +11,11 @@ if (fs.existsSync('set.env')) {
 const session = process.env.SESSION || '';
 const dev = process.env.OWNER_NUMBER || '254748387615';
 
+const autostatusAutoviewStatus = process.env.AUTOVIEW_STATUS || 'true';
+const autostatusAutoLikeStatus = process.env.AUTOLIKE_STATUS || 'false';
+const autostatusAutoReplyStatus = process.env.AUTOREPLY_STATUS || 'false';
+const autostatusStatusReplyText = process.env.STATUS_REPLY_TEXT || '✅ Status Viewed By Keith Md';
+const autostatusStatusLikeEmojis = process.env.STATUS_LIKE_EMOJIS || '💛,❤️,💜,🤍,💙';
 
 
 // Bot settings
@@ -48,6 +53,12 @@ module.exports = {
   database,
   dev,
   session, 
+  autostatusAutoviewStatus,
+  autostatusAutoLikeStatus,
+  autostatusAutoReplyStatus,
+  autostatusStatusReplyText,
+  autostatusStatusLikeEmojis,
+  
   // Bot settings
   botPrefix,
   botAuthor,
