@@ -14,9 +14,9 @@ const dev = process.env.OWNER_NUMBER || '254748387615';
 
 
 // Bot settings
-const botPrefix = process.env.PREFIX || ".";
+const botPrefix = process.env.PREFIX || "";
 const botAuthor = process.env.AUTHOR || "Keith";
-const  = process.env.BOT_PIC || "https://files.catbox.moe/9zqj7g.jpg";
+const botUrl = process.env.BOT_PIC || "https://files.catbox.moe/9zqj7g.jpg";
 const botGurl = process.env.BOT_GURL || "https://github.com/Keithkeizzah/KEITH-MD";
 const botTimezone = process.env.BOT_TIMEZONE || "Africa/Nairobi";
 const botBotname = process.env.BOT_BOTNAME || "KEITH-MD";
